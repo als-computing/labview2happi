@@ -45,7 +45,7 @@ device_name = re.sub(r'(?<!^)(?=[A-Z])', '_', dev).lower()
 try:
     device = client.create_device("Device",
                               name=device_name,
-                              prefix=f"BS701:{device_name}",
+                              prefix=f"BCS701:{dev}",
                               beamline="7.0.1.1 COSMIC",
                               location_group="Loc1",
                               functional_group="Func1",
