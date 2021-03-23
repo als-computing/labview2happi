@@ -12,7 +12,7 @@ from happi.errors import EntryError, DuplicateError
 USERNAME = os.getenv("USERNAME_MONGO")
 PASSWD = os.getenv("USERNAME_MONGO")
 
-db = MongoBackend(host='131.243.73.51',
+db = MongoBackend(host='131.243.73.172',
                   db='happi',
                   user=USERNAME,
                   pw=PASSWD,
