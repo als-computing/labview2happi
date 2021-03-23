@@ -24,6 +24,23 @@ client = Client(db)
 #use device name from input when calling this script in labview, each time an EPICS PV gets registered
 dev = sys.argv[-1]
 #comply with happi naming conventions
+if re.search('LS_LLHTA', dev):
+    dev = dev.replace('LS_LLHTA', 'ls_llhta')
+if re.search('LS_LLHTB', dev):
+    dev = dev.replace('LS_LLHTB', 'ls_llhtb')
+if re.search('TCP', dev):
+    dev = dev.replace('TCP', 'tcp')
+if re.search('CCD', dev):
+    dev = dev.replace('CCD', 'ccd')
+if re.search('UDP', dev):
+    dev = dev.replace('UDP', 'udp')
+if re.search('EPU', dev):
+    dev = dev.replace('EPU', 'epu')
+if re.search('AI', dev):
+    dev = dev.replace('AI', 'ai')
+if re.search('CAEN', dev):
+    dev = dev.replace('CAEN', 'caen_')
+
 device_name = re.sub(r'(?<!^)(?=[A-Z])', '_', dev).lower()
 try:
     device = client.create_device("Device",
