@@ -10,7 +10,7 @@ from happi.errors import EntryError, DuplicateError
 
 #selecting a database backend and initialze database file if not already existing
 USERNAME = os.getenv("USERNAME_MONGO")
-PASSWD = os.getenv("USERNAME_MONGO")
+PASSWD = os.getenv("PASSWD_MONGO")
 
 db = MongoBackend(host='131.243.73.172',
                   db='happi',
