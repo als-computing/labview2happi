@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 from happi.backends.mongo_db import MongoBackend
 from happi import Client
 from happi.errors import EntryError, DuplicateError
@@ -8,17 +9,20 @@ from happi.errors import EntryError, DuplicateError
 # for now copy from labview server --> later create a mongo db
 
 #selecting a database backend and initialze database file if not already existing
+USERNAME = os.getenv("USERNAME_MONGO")
+PASSWD = os.getenv("USERNAME_MONGO")
 
-# cl = pymongo.MongoClient('mongodb://happi.labview.com')
 db = MongoBackend(host='131.243.73.51',
                   db='happi',
+                  user=USERNAME,
+                  pw=PASSWD,
                   collection='labview',
                   timeout=None, )
 
 #connect client to database
 client = Client(db)
 #use device name from input when calling this script in labview, each time an EPICS PV gets registered
-dev = sys.argv[0]
+dev = sys.argv[-1]
 #comply with happi naming conventions
 device_name = re.sub(r'(?<!^)(?=[A-Z])', '_', dev).lower()
 try:
