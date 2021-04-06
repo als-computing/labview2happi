@@ -14,7 +14,7 @@ except PermissionError:
 
 
 ### TODO replace this with procedual labview output
-bcs_file = open('./motorPV_names.txt')
+bcs_file = open('../motorPV_names.txt')
 
 dev_dict ={}
 for line in bcs_file.readlines():
