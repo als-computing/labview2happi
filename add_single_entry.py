@@ -1,30 +1,40 @@
+import os
 import re
+import sys
+from dotenv import dotenv_values
+
 from happi.backends.mongo_db import MongoBackend
 from happi import Client
 from happi.errors import EntryError, DuplicateError
-import os
 
-USER_MONGO = os.getenv("USER_MONGO")
-PASSWD_MONGO = os.getenv("PASSWD_MONGO")
 
-db = MongoBackend(host='131.243.73.172',
-                  db='happi',
-                  user = USER_MONGO,
-                  pw = PASSWD_MONGO,
-                  collection='labview_static',
-                  timeout=None, )
+conf = dotenv_values(sys.argv[1])
 
-pv_prefix = "BCS701"
-device_name = "DetectorDiodeCurrent"
+USER = conf.get("USER_HAPPI")
+PASSWD = conf.get("PASSWD_HAPPI")
+HOST = conf.get("HOST_HAPPI")
+DB = conf.get("DB_HAPPI")
+COLLECTION = conf.get("COLLECTION_HAPPI")
+PREFIX = conf.get("PREFIX_HAPPI")
+BEAMLINE = conf.get("BEAMLINE_HAPPI")
+
+db = MongoBackend(host=HOST,
+                  db=DB,
+                  user=USER,
+                  pw=PASSWD,
+                  collection=COLLECTION,
+                  timeout=None)
+
+device_name = "TestDevice"
 
 client = Client(db)
 device = client.create_device("Device",
                                    name=device_name,
-                                   prefix=f"{pv_prefix}:{device_name}",
-                                   beamline="7.0.1.1 COSMIC",
+                                   prefix=f"{PREFIX}:{device_name}",
+                                   beamline="ALS beamline",
                                    location_group="Loc1",
                                    functional_group="Func1",
                                    device_class="ophyd.EpicsMotor",
                                    args=["{{prefix}}"],
-                                   source=  "labview" )
+                                   source="labview")
 device.save()

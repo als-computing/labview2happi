@@ -1,23 +1,29 @@
+import os
 import re
 import sys
-import os
+from dotenv import dotenv_values
+
 from happi.backends.mongo_db import MongoBackend
 from happi import Client
 from happi.errors import EntryError, DuplicateError
 
-#TODO:
-# for now copy from labview server --> later create a mongo db
 
-#selecting a database backend and initialze database file if not already existing
-USERNAME = os.getenv("USERNAME_MONGO")
-PASSWD = os.getenv("PASSWD_MONGO")
+conf = dotenv_values(sys.argv[1])
 
-db = MongoBackend(host='131.243.73.172',
-                  db='happi',
-                  user=USERNAME,
+USER = conf.get("USER_HAPPI")
+PASSWD = conf.get("PASSWD_HAPPI")
+HOST = conf.get("HOST_HAPPI")
+DB = conf.get("DB_HAPPI")
+COLLECTION = conf.get("COLLECTION_HAPPI")
+PREFIX = conf.get("PREFIX_HAPPI")
+BEAMLINE = conf.get("BEAMLINE_HAPPI")
+
+db = MongoBackend(host=HOST,
+                  db=DB,
+                  user=USER,
                   pw=PASSWD,
-                  collection='labview',
-                  timeout=None, )
+                  collection=COLLECTION,
+                  timeout=None)
 
 #connect client to database
 client = Client(db)
