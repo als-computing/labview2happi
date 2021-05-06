@@ -1,4 +1,3 @@
-
 import sys
 from dotenv import dotenv_values
 from happi.backends.mongo_db import MongoClient
@@ -15,9 +14,7 @@ PREFIX = conf.get("PREFIX_HAPPI")
 BEAMLINE = conf.get("BEAMLINE_HAPPI")
 EXCLUDE_LIST_PATH = conf.get("EXCLUDE_LIST_HAPPI")
 
-
 client =  MongoClient(f'mongodb://{USER}:{PASSWD}@{HOST}:27017/{DB}?authsource={DB}')
-#TODO: add authentication
 db = client[DB]
 collection = db[COLLECTION]
 

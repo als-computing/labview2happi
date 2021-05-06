@@ -1,5 +1,3 @@
-import os
-import re
 import sys
 from dotenv import dotenv_values
 
@@ -19,10 +17,13 @@ PREFIX = conf.get("PREFIX_HAPPI")
 BEAMLINE = conf.get("BEAMLINE_HAPPI")
 EXCLUDE_LIST_PATH = conf.get("EXCLUDE_LIST_HAPPI")
 
-exclude_file = open(EXCLUDE_LIST_PATH, 'r')
-exclude_dev_list = []
-for line in exclude_file:
-    exclude_dev_list.append(line.strip())
+try:
+    exclude_file = open(EXCLUDE_LIST_PATH, 'r')
+    exclude_dev_list = []
+    for line in exclude_file:
+        exclude_dev_list.append(line.strip())
+except:
+    print("Could not open device exclusion list")
 
 db = MongoBackend(host=HOST,
                   db=DB,
@@ -33,7 +34,6 @@ db = MongoBackend(host=HOST,
 
 #connect client to database
 client = Client(db)
-#use device name from input when calling this script in labview, each time an EPICS PV gets registered
 dev_list = sys.argv[1:]
 for dev in dev_list:
     if dev not in (exclude_dev_list):
