@@ -17,6 +17,12 @@ DB = conf.get("DB_HAPPI")
 COLLECTION = conf.get("COLLECTION_HAPPI")
 PREFIX = conf.get("PREFIX_HAPPI")
 BEAMLINE = conf.get("BEAMLINE_HAPPI")
+EXCLUDE_LIST_PATH = conf.get("EXCLUDE_LIST_HAPPI")
+
+exclude_file = open(EXCLUDE_LIST_PATH, 'r')
+exclude_dev_list = []
+for line in exclude_file:
+    exclude_dev_list.append(line.strip())
 
 db = MongoBackend(host=HOST,
                   db=DB,
@@ -26,6 +32,7 @@ db = MongoBackend(host=HOST,
                   timeout=None)
 
 device_name = "TestDevice"
+source = "test"
 
 client = Client(db)
 device = client.create_device("Device",
@@ -36,5 +43,5 @@ device = client.create_device("Device",
                                    functional_group="Func1",
                                    device_class="ophyd.EpicsMotor",
                                    args=["{{prefix}}"],
-                                   source="labview")
+                                   source=source)
 device.save()
