@@ -1,13 +1,25 @@
-import os
-from pymongo import MongoClient
 
-USERNAME = os.getenv("USERNAME_MONGO")
-PASSWD = os.getenv("PASSWD_MONGO")
-#connect to mongoDB on tsuru
-client =  MongoClient(f'mongodb://{USERNAME}:{PASSWD}@131.243.73.172:27017/happi?authsource=happi')
+import sys
+from dotenv import dotenv_values
+from happi.backends.mongo_db import MongoClient
+
+
+conf = dotenv_values(sys.argv[1])
+
+USER = conf.get("USER_HAPPI")
+PASSWD = conf.get("PASSWD_HAPPI")
+HOST = conf.get("HOST_HAPPI")
+DB = conf.get("DB_HAPPI")
+COLLECTION = conf.get("COLLECTION_HAPPI")
+PREFIX = conf.get("PREFIX_HAPPI")
+BEAMLINE = conf.get("BEAMLINE_HAPPI")
+EXCLUDE_LIST_PATH = conf.get("EXCLUDE_LIST_HAPPI")
+
+
+client =  MongoClient(f'mongodb://{USER}:{PASSWD}@{HOST}:27017/{DB}?authsource={DB}')
 #TODO: add authentication
-db = client['happi']
-collection = db['labview']
+db = client[DB]
+collection = db[COLLECTION]
 
 collection.remove({})
-print("removed labview collection")
+print(f"removed {COLLECTION} collection")
