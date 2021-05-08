@@ -2,7 +2,7 @@ import sys
 from dotenv import dotenv_values
 from happi.backends.mongo_db import MongoClient
 
-
+print(sys.argv[1])
 conf = dotenv_values(sys.argv[1])
 
 USER = conf.get("USER_HAPPI")

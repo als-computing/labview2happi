@@ -5,7 +5,7 @@ from happi.backends.mongo_db import MongoBackend
 from happi import Client
 from happi.errors import EntryError, DuplicateError
 
-
+print(sys.argv[1])
 conf = dotenv_values(sys.argv[1])
 
 USER = conf.get("USER_HAPPI")
@@ -17,9 +17,9 @@ PREFIX = conf.get("PREFIX_HAPPI")
 BEAMLINE = conf.get("BEAMLINE_HAPPI")
 EXCLUDE_LIST_PATH = conf.get("EXCLUDE_LIST_HAPPI")
 
+exclude_dev_list = []
 try:
     exclude_file = open(EXCLUDE_LIST_PATH, 'r')
-    exclude_dev_list = []
     for line in exclude_file:
         exclude_dev_list.append(line.strip())
 except:
@@ -34,14 +34,16 @@ db = MongoBackend(host=HOST,
 
 #connect client to database
 client = Client(db)
-dev_list = sys.argv[1:]
+dev_list = sys.argv[2:]
 for dev in dev_list:
-    if dev not in (exclude_dev_list):
+    if dev in exclude_dev_list:
+        pass
+    else:
         try:
             device = client.create_device("Device",
                                       name=dev,
-                                      prefix=f"BCS701:{dev}",
-                                      beamline="7.0.1.1 COSMIC",
+                                      prefix=f"{PREFIX}:{dev}",
+                                      beamline=BEAMLINE,
                                       location_group="Loc1",
                                       functional_group="Func1",
                                       device_class="ophyd.EpicsMotor",
