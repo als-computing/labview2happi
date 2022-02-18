@@ -32,6 +32,7 @@ except:
                   "Please run 'python add_single_entry.py $path_to_conv.env_file $device_name $source_name' ")
 
 client = Client(db)
+
 device = client.create_device("Device",
                               name=device_name,
                               prefix=f"{PREFIX}:{device_name}",
