@@ -1,24 +1,47 @@
 """
 Usage:
     call this script like this
-        python write_pv_to_mongo.py config_file device_list_file
+        python write_pv_to_mongo.py -c config_file -t type -p "device_list_file"
 
     A template of the config file can be found in the template folder, make a copy on your system and change fields
     accordingly.
+
+    type = MO, AI, DIO, or SV
 
     For updating an existing database collection make sure to run wipe_labview_collection.py first before calling write_pv_to_mongo.py
 """
 
 
-import sys
+import sys, getopt
 from dotenv import dotenv_values
 
-from happi.backends.mongo_db import MongoBackend
+#from happi.backends.mongo_db import MongoBackend
 from happi import Client
 from happi.errors import EntryError, DuplicateError
 
 print(sys.argv[1])
 conf = dotenv_values(sys.argv[1])
+dev_list = sys.argv[2:]
+
+# Default in case -t or --type is not present:
+recordType='MO'
+
+try:   
+    opts, args = getopt.getopt(sys.argv[1:], "c:t:p:", ["config=", "type=", "pv_list="])
+except getopt.GetoptError as err:
+    print(err)
+    sys.exit(2)
+for o, a in opts:
+    if o in ("-c", "--config"):
+        conf = dotenv_values(a)
+    elif o in ("-t", "--type"):
+        recordType = a
+    elif o in ("-p", "--pv_list"):
+        dev_list = a.split()
+    else:
+        print("Bad option")
+        sys.exit(2)
+
 
 USER = conf.get("USER_HAPPI")
 PASSWD = conf.get("PASSWD_HAPPI")
@@ -39,33 +62,42 @@ except:
     pass
 
 # connect to database
-db = MongoBackend(host=HOST,
-                  db=DB,
-                  user=USER,
-                  pw=PASSWD,
-                  collection=COLLECTION,
-                  timeout=None)
+#db = MongoBackend(host=HOST,
+#                  db=DB,
+#                  user=USER,
+#                  pw=PASSWD,
+#                  collection=COLLECTION,
+#                  timeout=None)
 
 # connect client to database
-client = Client(db)
+#client = Client(db)
 
-dev_list = sys.argv[2:]
+ophydClass = {
+    "MO": "ophyd.EpicsMotor",
+    "AI": "ophyd.signal",
+    "DIO": "",
+    "SV": ""
+    }
+
+# if record_type == "MO":
+# dev_list = sys.argv[2:]
 # iterate through devices in the device list provided on labview startup unless device is excluded
 for dev in dev_list:
     if dev in exclude_dev_list:
         pass
     else:
         try:
-            device = client.create_device("Device",
-                                      name=dev,
-                                      prefix=f"{PREFIX}:{dev}",
-                                      beamline=BEAMLINE,
-                                      location_group="Loc1",
-                                      functional_group="Func1",
-                                      device_class="ophyd.EpicsMotor",
-                                      args=["{{prefix}}"],
-                                      source="labview")
-            device.save()
+#            device = client.create_device("Device",
+#                                      name=dev,
+#                                      prefix=f"{PREFIX}:{dev}",
+#                                      beamline=BEAMLINE,
+#                                      location_group="Loc1",
+#                                      functional_group="Func1",
+#                                      device_class=ophydClass[recordType],
+#                                      args=["{{prefix}}"],
+#                                      source="labview")
+#            device.save()
+            print(USER, dev,recordType,ophydClass[recordType])
 
         except EntryError as err:
             print(f"{err}: {dev} Could not write device!")
