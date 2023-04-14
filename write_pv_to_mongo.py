@@ -15,15 +15,15 @@ Usage:
 import sys, getopt
 from dotenv import dotenv_values
 
-#from happi.backends.mongo_db import MongoBackend
+from happi.backends.mongo_db import MongoBackend
 from happi import Client
 from happi.errors import EntryError, DuplicateError
 
 print(sys.argv[1])
+
+# Default choices that will work with the old style argument list -- also assumes motors only
 conf = dotenv_values(sys.argv[1])
 dev_list = sys.argv[2:]
-
-# Default in case -t or --type is not present:
 recordType='MO'
 
 try:   
@@ -62,15 +62,15 @@ except:
     pass
 
 # connect to database
-#db = MongoBackend(host=HOST,
-#                  db=DB,
-#                  user=USER,
-#                  pw=PASSWD,
-#                  collection=COLLECTION,
-#                  timeout=None)
+db = MongoBackend(host=HOST,
+                  db=DB,
+                  user=USER,
+                  pw=PASSWD,
+                  collection=COLLECTION,
+                  timeout=None)
 
 # connect client to database
-#client = Client(db)
+client = Client(db)
 
 ophydClass = {
     "MO": "ophyd.EpicsMotor",
@@ -87,17 +87,17 @@ for dev in dev_list:
         pass
     else:
         try:
-#            device = client.create_device("Device",
-#                                      name=dev,
-#                                      prefix=f"{PREFIX}:{dev}",
-#                                      beamline=BEAMLINE,
-#                                      location_group="Loc1",
-#                                      functional_group="Func1",
-#                                      device_class=ophydClass[recordType],
-#                                      args=["{{prefix}}"],
-#                                      source="labview")
-#            device.save()
-            print(USER, dev,recordType,ophydClass[recordType])
+            device = client.create_device("Device",
+                                      name=dev,
+                                      prefix=f"{PREFIX}:{dev}",
+                                      beamline=BEAMLINE,
+                                      location_group="Loc1",
+                                      functional_group="Func1",
+                                      device_class=ophydClass[recordType],
+                                      args=["{{prefix}}"],
+                                      source="labview")
+            device.save()
+#            print(USER, dev,recordType,ophydClass[recordType])
 
         except EntryError as err:
             print(f"{err}: {dev} Could not write device!")
