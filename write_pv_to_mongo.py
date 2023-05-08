@@ -21,12 +21,12 @@ from happi.errors import EntryError, DuplicateError
 
 print(sys.argv[1])
 
-# Default choices that will work with the old style argument list -- also assumes motors only
+# Default choices that will work with the old style argument list -- also assumes motors only.
 conf = dotenv_values(sys.argv[1])
 dev_list = sys.argv[2:]
-recordType='MO'
+recordType="MO"
 
-try:   
+try:
     opts, args = getopt.getopt(sys.argv[1:], "c:t:p:", ["config=", "type=", "pv_list="])
 except getopt.GetoptError as err:
     print(err)
@@ -74,9 +74,9 @@ client = Client(db)
 
 ophydClass = {
     "MO": "ophyd.EpicsMotor",
-    "AI": "ophyd.signal",
-    "DIO": "",
-    "SV": ""
+    "AI": "ophyd.EpicsSignal",
+    "DIO": "ophyd.EpicsSignal",
+    "SV": "ophyd.EpicsSignal"
     }
 
 # if record_type == "MO":
@@ -87,9 +87,18 @@ for dev in dev_list:
         pass
     else:
         try:
-            device = client.create_device("Device",
-                                      name=dev,
-                                      prefix=f"{PREFIX}:{dev}",
+            splitdev = dev.split(':')
+            devname = splitdev[0]
+            if len(splitdev) > 1:
+                suffix = ':' + splitdev[1]
+            else:
+                suffix = ''
+#            device = client.create_device("Device",
+            device = client.create_device("OphydItem",
+#                                      name=dev,
+                                      name=devname,
+#                                      prefix=f"{PREFIX}:{dev}",
+                                      prefix=f"{PREFIX}:{devname}{suffix}",     #Need to have the ':' be part of the suffix variable so that the motor names don't end with a :
                                       beamline=BEAMLINE,
                                       location_group="Loc1",
                                       functional_group="Func1",
